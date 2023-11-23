@@ -1,7 +1,7 @@
 # Large Language Model Workshop
 [![maintained by dataroots](https://img.shields.io/badge/maintained%20by-dataroots-%2300b189)](https://dataroots.io)
 [![PythonVersion](https://img.shields.io/badge/python-3.9-blue)](https://img.shields.io/badge/python-3.9-blue)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]()
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/andreabenevenut/LLM_workshop/blob/main/notebooks/3%20-%20Building%20a%20Virtual%20Assistant%20with%20Retrieval-Augmented%20Generation%20(RAG)%20via%20LLMs.ipynb)
 
 Welcome to the Large Language Model Workshop! 🚀
 
@@ -27,10 +27,9 @@ This workshop is designed to introduce participants to the fascinating world of 
 
 ## Additional Resources
 
-Explore the following resources to dive deeper into Language Models and their applications:
+Here are some useful links:
 
 - [LangChain Documentation](https://python.langchain.com/docs/get_started/introduction)
 - [Google Colab - Getting Started](https://colab.research.google.com/notebooks/intro.ipynb)
-- [OpenAI GPT Models](https://openai.com/gpt)
 
 We hope you find this workshop informative and engaging! Feel free to explore, experiment, and ask questions during the session. Happy learning! 📚✨
