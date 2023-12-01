@@ -1,31 +1,33 @@
 import streamlit as st
-from langchain.llms import OpenAI
+from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain.output_parsers import PydanticOutputParser
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, validator
 from typing import Sequence
 import pandas as pd
 
 
 
-def generate_post_dataroots(openai_api_key, temperature, social_network, position, tone, max_words, extra_info= ""):
-    llm = OpenAI(temperature=temperature, openai_api_key=openai_api_key)
+MODEL_NAME="gpt-3.5-turbo-1106"
+
+def generate_post_dataroots(openai_api_key, temperature, social_media, position, tone, max_words, extra_info= ""):
+    llm = ChatOpenAI(temperature=temperature, openai_api_key=openai_api_key, model_name=MODEL_NAME)
 
     my_prompt = PromptTemplate(
-    input_variables = ["social_network", "position", "tone", "max_words", "extra_info"],
+    input_variables = ["social_media", "position", "tone", "max_words", "extra_info"],
     input_types={
-        "social_network": str,
+        "social_media": str,
         "position": str,
         "tone": str,
         "max_words": int,
         "extra_info": str
         },
     template = """
-    You are Dataroots assistant and you are here to help HR create new posts on {social_network} to recruite new people.
+    You are Dataroots assistant and you are here to help HR create new posts on {social_media} to recruite new people.
     The post should be about looking for a {position}.
-    The tone must be {tone}.
     The max number of words for the post should be {max_words}.
+    Be {tone} in the post!
 
     {extra_info}
     """
@@ -33,7 +35,7 @@ def generate_post_dataroots(openai_api_key, temperature, social_network, positio
     recruitment_chain = LLMChain(llm=llm, prompt=my_prompt, output_key="generated_post")
 
     output = recruitment_chain({
-        "social_network": social_network,
+        "social_media": social_media,
         "position": position,
         "tone": tone,
         "max_words": max_words,
@@ -44,55 +46,50 @@ def generate_post_dataroots(openai_api_key, temperature, social_network, positio
 
 
 
-def generate_post_dataroots_with_parsing(openai_api_key, temperature, n_posts, social_network, position, tone, max_words, extra_info= ""):
-    llm = OpenAI(temperature=temperature, openai_api_key=openai_api_key)
+def extract_info_from_text(openai_api_key, file):
+    llm = ChatOpenAI(temperature=0, openai_api_key=openai_api_key, model_name=MODEL_NAME)
+
+    file_content = file.getvalue().decode("utf-8")
+    class PlayerInfo(BaseModel):
+        player_name: str = Field(description="This is the name of the player")
+        player_role: str = Field(description="This is the football role of the player")
+        player_team: str = Field(description="This is the team the player belongs to")
+        player_goals: int = Field(description="This is an integer that indicates how many goals the player scored")
+        
+        @validator('player_team')
+        def check_player_team(cls, info):
+            if info not in ["Rootsball", "DataFoots"]:
+                raise ValueError(f"The player is part of {info} which is not a possible team")
+            return info
+    class Players(BaseModel):
+        players: Sequence[PlayerInfo] = Field(..., description="The players that participated in the game")
 
     
-    class PostInfo(BaseModel):
-        post_description: str = Field(description="This is the post")
-        reasoning: str = Field(description="This is the reasons for the score")
-        likelihood_of_success: int = Field(description="This is an integer score between 1-10")
-        
-    class Posts(BaseModel):
-        posts: Sequence[PostInfo] = Field(..., description="The social media posts")
 
-    pydantic_parser = PydanticOutputParser(pydantic_object=Posts)
+
+    pydantic_parser = PydanticOutputParser(pydantic_object=Players)
     format_instructions = pydantic_parser.get_format_instructions()
 
 
     my_prompt = PromptTemplate(
-    input_variables = ["n_posts", "social_network", "position", "tone", "max_words", "extra_info", "format_instructions"],
-    input_types={
-        "n_posts": int,
-        "social_network": str,
-        "position": str,
-        "tone": str,
-        "max_words": int,
-        "extra_info": str
-        },
+    input_variables = ["file_content", "format_instructions"],
     template = """
-    You are Dataroots assistant and you are here to help HR create new posts on {social_network} to recruite new people.
-    Create in total {n_posts} new posts.
-    The posts should be about looking for a {position}.
-    The tone must be {tone}.
-    The max number of words for each post must be {max_words}.
-    {extra_info}
-
-    After crafting the new posts, rate their potential success on a scale of 1 to 10 based on how catchy and appealing they sound!
+    You are a diligent assistant whose task is to extract information from a piece of text and parse it in the correct format.
+    The following is the piece of text
+    '''
+    {file_content}
+    '''
     {format_instructions}
-    """
+    """,
     )
-    recruitment_chain = LLMChain(llm=llm, prompt=my_prompt)
 
-    output = recruitment_chain({
-        "n_posts": n_posts,
-        "social_network": social_network,
-        "position": position,
-        "tone": tone,
-        "max_words": max_words,
-        "extra_info": extra_info,
+    extraction_chain = LLMChain(llm=llm, prompt=my_prompt)
+
+    output = extraction_chain({
+        "file_content": file_content,
         "format_instructions": format_instructions
     })
+
     parsed_output= pydantic_parser.parse(output["text"])
-    df = pd.DataFrame([dict(obj) for obj in parsed_output.posts])
+    df = pd.DataFrame([dict(obj) for obj in parsed_output.players])
     return df
