@@ -1,8 +1,12 @@
-import streamlit as st
 from langchain.chat_models import ChatOpenAI
 from langchain.prompts import PromptTemplate
-from langchain.chains import LLMChain
+from langchain.chains import LLMChain, RetrievalQAWithSourcesChain
 from langchain.output_parsers import PydanticOutputParser
+from langchain.document_loaders import WebBaseLoader
+from langchain.text_splitter import CharacterTextSplitter
+from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain.vectorstores import FAISS
+
 from pydantic import BaseModel, Field, validator
 from typing import Sequence
 import pandas as pd
@@ -93,3 +97,27 @@ def extract_info_from_text(openai_api_key, file):
     parsed_output= pydantic_parser.parse(output["text"])
     df = pd.DataFrame([dict(obj) for obj in parsed_output.players])
     return df
+
+
+
+
+def ask_dataroots_chatbot(openai_api_key, temperature, urls, user_input):
+    loader = WebBaseLoader(urls)
+
+    dataroots_website = loader.load()
+
+    text_splitter = CharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
+    documents_chunks = text_splitter.split_documents(dataroots_website)
+
+
+    embeddings = OpenAIEmbeddings()
+    dataroots_vector_store = FAISS.from_documents(documents_chunks, embeddings)
+
+
+    qa_chain = RetrievalQAWithSourcesChain.from_chain_type(
+        llm=ChatOpenAI(temperature=temperature, openai_api_key=openai_api_key, model_name=MODEL_NAME),
+        retriever=dataroots_vector_store.as_retriever()
+    )
+
+    output = qa_chain({"question": user_input})
+    return output

@@ -4,3 +4,7 @@ generate-post:
 
 extract-info-parse:
 	streamlit run ./applications/2_dataroots_recruitment_parser.py
+
+
+launch-chatbot:
+	streamlit run ./applications/3_chatbot_dataroots_website.py
