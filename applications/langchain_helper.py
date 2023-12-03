@@ -101,9 +101,8 @@ def extract_info_from_text(openai_api_key, file):
 
 
 
-def ask_dataroots_chatbot(openai_api_key, temperature, urls, user_input):
+def create_vector_store(urls):
     loader = WebBaseLoader(urls)
-
     dataroots_website = loader.load()
 
     text_splitter = CharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
@@ -111,12 +110,17 @@ def ask_dataroots_chatbot(openai_api_key, temperature, urls, user_input):
 
 
     embeddings = OpenAIEmbeddings()
-    dataroots_vector_store = FAISS.from_documents(documents_chunks, embeddings)
+    vector_store = FAISS.from_documents(documents_chunks, embeddings)
+    return vector_store
+
+
+
+def ask_dataroots_chatbot(openai_api_key, temperature, vector_store, user_input):
 
 
     qa_chain = RetrievalQAWithSourcesChain.from_chain_type(
         llm=ChatOpenAI(temperature=temperature, openai_api_key=openai_api_key, model_name=MODEL_NAME),
-        retriever=dataroots_vector_store.as_retriever()
+        retriever=vector_store.as_retriever()
     )
 
     output = qa_chain({"question": user_input})

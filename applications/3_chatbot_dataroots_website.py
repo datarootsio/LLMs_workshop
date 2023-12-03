@@ -12,23 +12,38 @@ st.title(":dataroots: Dataroots website chatbot")
 if 'url_list' not in st.session_state:
     st.session_state.url_list = []
 
-# Function to display entered URLs
-def display_urls(urls):
+# Create a dictionary to track checked/unchecked status of URLs
+if 'url_status' not in st.session_state:
+    st.session_state.url_status = {}
+
+# Function to display entered URLs with checkboxes
+def display_urls_with_checkbox(urls):
     st.sidebar.header("Entered URLs")
     for url in urls:
-        st.sidebar.write(url)
+        checkbox_state = st.sidebar.checkbox(url, key=url)
+        st.session_state.url_status[url] = checkbox_state
 
-# Display all entered URLs
-display_urls(st.session_state.url_list)
+display_urls_with_checkbox(st.session_state.url_list)
+
+def submit():
+    new_url = st.session_state.new_url
+    if new_url not in st.session_state.url_list:
+        st.session_state.url_list.append(new_url)
+        st.session_state.url_status[new_url] = False
+        st.session_state.url_list.sort()
+        st.session_state.new_url = ""
 
 # Text input for adding a new URL
-new_url = st.text_input(label="url", label_visibility="hidden")
+st.text_input(label="URL", key="new_url", on_change=submit)
 
-# Add URL button
-if st.button("Add URL") and new_url:
-    st.session_state.url_list.append(new_url)
-    st.sidebar.success(f"Added: {new_url}")
-    st.rerun()
+# Consolidate knowledge button
+if st.button("Consolidate knowledge"):
+    selected_urls = [url for url, status in st.session_state.url_status.items() if status]
+    if len(selected_urls) == 0:
+        st.sidebar.warning("Please select at least one URL!")
+    else:
+        st.sidebar.success("Created vector store")
+        st.session_state.vector_store = lch.create_vector_store(selected_urls)
 
 # Temperature slider
 temperature = st.sidebar.slider("Select temperature", min_value=0.0, max_value=1.0, value=0.0)
@@ -38,9 +53,15 @@ user_input = st.text_area("Ask your question")
 
 # Generate button
 if st.button("Answer"):
-    if st.session_state.url_list and user_input:
-        response = lch.ask_dataroots_chatbot(openai_api_key, temperature, st.session_state.url_list, user_input)
+    if st.session_state.vector_store and user_input:
+        response = lch.ask_dataroots_chatbot(
+            openai_api_key=openai_api_key,
+            temperature=temperature,
+            vector_store=st.session_state.vector_store,
+            user_input=user_input
+        )
         st.text_area(
-            label="answer",
+            label="Answer",
             value=response['answer'] + '\n' + response['sources'],
-            height=200)
+            height=200
+        )
