@@ -6,7 +6,7 @@ import os
 load_dotenv("openapi_key.txt")
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
-st.title(":dataroots: Dataroots website chatbot")
+st.title("🤖 Dataroots website chatbot")
 
 # Create a list to store the entered URLs persistently throughout the session
 if "url_list" not in st.session_state:
