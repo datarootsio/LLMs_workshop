@@ -1,0 +1,8 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.1.6
+    hooks:
+      - id: ruff
+        args: ['--fix']  # Arguments need to be in a list format
+      - id: ruff-format
