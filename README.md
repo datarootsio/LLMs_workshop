@@ -1,7 +1,8 @@
 # Large Language Model Workshop
 [![maintained by dataroots](https://img.shields.io/badge/maintained%20by-dataroots-%2300b189)](https://dataroots.io)
 [![PythonVersion](https://img.shields.io/badge/python-3.9-blue)](https://img.shields.io/badge/python-3.9-blue)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/andreabenevenut/LLM_workshop/blob/main/notebooks/3%20-%20Building%20a%20Virtual%20Assistant%20with%20Retrieval-Augmented%20Generation%20(RAG)%20via%20LLMs.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]
+(https://colab.research.google.com/github/andreabenevenut/LLM_workshop/blob/main/notebooks/3_Building_a_Virtual_Assistant_with_Retrieval_Augmented_Generation_(RAG)_via_LLMs.ipynb)
 
 Welcome to the Large Language Model Workshop! 🚀
 
@@ -15,15 +16,14 @@ This workshop is designed to introduce participants to the fascinating world of 
 
 - Prompt engineering with LLMs.
 - Extract information and parse it in a structured way
-- Build Conversational Chatbots
+- Build  Chatbots and ask questions over documents
 
 
 ## How to Use This Repository
 
-1. **Clone or Download:** Clone this repository or download the contents to your local machine.
-2. **Setup Environment:** Refer to the provided setup instructions to configure your Python environment and install necessary libraries.
-3. **Explore Notebooks:** Open and explore the Jupyter Notebooks provided in the repository. Follow along with the workshop instructions and code samples.
-
+1. **Clone:** Clone this repository onto your local machine.
+2. **Explore Notebooks:** Open and explore the Jupyter Notebooks provided in the repository. Follow along with the workshop instructions and code samples. You can open the notebooks via Google Collab.
+3. **Launch applications:** If you want to launch the applications, create a new conda Environment based on `applications/environment.yml`. You can then launch the three applications (shortcuts provided in the `Makefile`).
 
 ## Additional Resources
 
