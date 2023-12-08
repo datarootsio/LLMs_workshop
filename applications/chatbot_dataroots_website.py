@@ -60,7 +60,7 @@ temperature = st.sidebar.slider(
 user_input = st.text_area("Ask your question")
 
 # Generate button
-if st.button("Answer"):
+if st.button("Submit question"):
     if st.session_state.vector_store and user_input:
         response = lch.ask_dataroots_chatbot(
             openai_api_key=openai_api_key,
@@ -70,6 +70,7 @@ if st.button("Answer"):
         )
         st.text_area(
             label="Answer",
-            value=response["answer"] + "\n" + response["sources"],
+            value=response["answer"],
             height=200,
         )
+        st.markdown(body=f'Sources: {response["sources"]}', unsafe_allow_html=True)
