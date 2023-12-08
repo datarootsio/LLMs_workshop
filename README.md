@@ -1,8 +1,7 @@
 # Large Language Model Workshop
 [![maintained by dataroots](https://img.shields.io/badge/maintained%20by-dataroots-%2300b189)](https://dataroots.io)
 [![PythonVersion](https://img.shields.io/badge/python-3.9-blue)](https://img.shields.io/badge/python-3.9-blue)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]
-(https://colab.research.google.com/github/andreabenevenut/LLM_workshop/blob/main/notebooks/3_Building_a_Virtual_Assistant_with_Retrieval_Augmented_Generation_(RAG)_via_LLMs.ipynb)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/andreabenevenut/LLM_workshop/blob/main/notebooks/3_Building_a_Virtual_Assistant_with_Retrieval_Augmented_Generation_(RAG)_via_LLMs.ipynb)
 
 Welcome to the Large Language Model Workshop! 🚀
 
